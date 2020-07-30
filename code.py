@@ -1,10 +1,25 @@
 import numpy as np 
+import pygame  
 
 #Sets the grid dimensions
-x_length = 10 #int(input("Enter the width of the grid: "))
-y_length = 10 #int(input("Enter the height of the grid: "))
+x_length = 100 #int(input("Enter the width of the grid: "))
+y_length = 100 #int(input("Enter the height of the grid: "))
 grid =[["[ ]"]*x_length]*y_length
 grid = np.array(grid)
+
+#Pygame global variables
+width = 20
+height = 20
+margin = 5
+white = (255,255,255)
+black = (0,0,0)
+red = (255,0,0)
+blue = (0,0,255)
+green = (0,255,0)
+orange = (255,165,0)
+gameDisplay = pygame.display.set_mode((20*x_length, 20*y_length))
+gameDisplay.fill(black)
+pixAr = pygame.PixelArray(gameDisplay)
     
 """
 KEY
@@ -44,10 +59,13 @@ def weight(x,y,arr):
 path = [[cp["x"],cp["y"]]]
 checked = []
 weights = []
+first = True
 
 def main():
     while cp["x"] != fp["x"] and cp["y"] != fp["y"]:
         output()
+        global first
+        first = False
         #Checks all 8 surrounding blocks from cp
         #Creates a weight for all 8, to be compared
         for i in range(8):
@@ -154,6 +172,14 @@ def main():
     output()
     print("Finished in " + str(len(path))+ " moves.")
 
+def drawblock(colour, row, column):
+    pygame.draw.rect(gameDisplay, #The screen it's using
+                                    colour, #The colour of the blocks
+                                    [(margin + width) * column + margin, #Its x position
+                                    (margin + height) * row + margin, #Its y position
+                                    width, #The width of the blocks
+                                    height]) #The height of the blocks
+
 def output():
     #This is the output grid (oGrid)
     oGrid = ""
@@ -174,5 +200,30 @@ def output():
                 oGrid += "[ ]"
         oGrid += "\n"
     print(oGrid)
+
+    pygame.init()
+    if first:
+        print(first)
+        for row in range(x_length):
+                for column in range(y_length):
+                    try:
+                        if row == cp["x"] and column == cp["y"]:
+                            drawblock(blue, row, column)
+                        elif row == fp["x"] and column == fp["y"]:
+                            drawblock(green, row, column)
+                        elif row == sp["x"] and column == sp["y"]:
+                            drawblock(orange, row, column)
+                        elif checked.index([row,column]) != -1:
+                            drawblock(red, row, column)
+                        else:
+                            drawblock(white, row, column)
+                    except:
+                        drawblock(white, row, column)
+    else:
+        for i in range(len(checked)):
+            drawblock(red, checked[i][0], checked[i][1])
+        drawblock(blue, cp["x"], cp["y"])
+        drawblock(orange, sp["x"], sp["y"])
+    pygame.display.flip()
 
 main()
