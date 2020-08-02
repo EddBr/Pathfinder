@@ -1,7 +1,7 @@
 # Pathfinder
 Python A* Pathfinder 
 
-Haven't seen another A* Python Algorithm on GitHub.
+Use left mouse button to block positions, use Enter to start the pathfinder.
 
 Uses PyGame screen as output 
 
